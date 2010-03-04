@@ -37,15 +37,20 @@ SC.ChildrenAttribute = SC.ChildAttribute.extend(
     var attrKey   = this.get('key') || key,
         arrayKey  = SC.keyFor('__kidsArray__', SC.guidFor(this)),
         ret       = record[arrayKey],
-        recordType  = this.get('typeClass'), rel;
+        recordType  = this.get('typeClass'),
+        orderBy   = this.get('orderBy'), rel;
 
     // lazily create a ManyArray one time.  after that always return the 
     // same object.
     if (!ret) {
+      if (!SC.none(orderBy)) {
+        record.writeAttribute(attrKey,record.readAttribute(attrKey).sortProperty(orderBy), 1);
+      }
       ret = SC.ChildArray.create({ 
         record:         record,
         propertyName:   attrKey,
-        defaultRecordType: recordType
+        defaultRecordType: recordType,
+        orderBy: orderBy
       });
 
       record[arrayKey] = this._cachedRef = ret ; // save on record
