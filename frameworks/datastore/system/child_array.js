@@ -215,20 +215,24 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
         ret, idx, len;
     if (t === SC.T_FUNCTION) ret = orderBy(a, b);
     else if (t === SC.T_STRING) {
-      aValue = a ? (a.get ? a.get(orderBy) : a[orderBy]) : null;
-      bValue = b ? (b.get ? b.get(orderBy) : b[orderBy]) : null;
-      ret = SC.compare(aValue, bValue);
+      ret = this.__compare(a, b, orderBy);
     } else {
       len = orderBy.get('length');
       ret = 0;
       for(idx=0;(ret===0) && (idx<len);idx++) {
-        key = orderBy[idx];
-        aValue = a ? (a.get ? a.get(key) : a[key]) : null;
-        bValue = b ? (b.get ? b.get(key) : b[key]) : null;
-        ret = SC.compare(aValue, bValue);
+        ret = this.__compare(a, b, orderBy[idx]);
       } 
     }
     return ret ;
+  },
+  
+  __compare: function(a, b, orderBy) {
+    var dir='ASC', aValue, bValue;
+    
+    if (dir = orderBy.match(/^(ASC|DESC) (.*)$/)) { orderBy = dir[2]; dir = dir[1]; }
+    aValue = a ? (a.get ? a.get(orderBy) : a[orderBy]) : null;
+    bValue = b ? (b.get ? b.get(orderBy) : b[orderBy]) : null;
+    return (dir == 'ASC') ? SC.compare(aValue, bValue) : SC.compare(bValue, aValue);
   },
   
   /** @private
