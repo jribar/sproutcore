@@ -146,8 +146,13 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
         record   = this.get('record'),
         
         pname    = this.get('propertyName'),
-        cr, recordType;  
+        cr, recordType; 
+    
+    for (var i=0;i<recs.length;i++) {
+      if (recs[i] && recs[i].isChildRecord === YES && recs[i].attributes) recs[i] = recs[i].attributes();       
+    } 
     children.replace(idx, amt, recs);
+
     for(var i = idx; i <= idx+amt; i+=1){
       this.objectAt(i);
     }
@@ -155,6 +160,26 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     record.recordDidChange(pname);
     
     return this;
+  },
+  
+  /**
+    Push the object onto the end of the array.  If we have an orderBy attribute
+    we will instead place the object into the appropriate place.
+  */
+  pushObject: function(obj) {
+    var children = this.get('readOnlyChildren');
+    var len      = children ? children.length : 0,
+        orderBy  = this.get('orderBy'),
+        idx;
+        
+    // find idx to insert at.
+    if (orderBy) {
+      idx = this._findInsertionLocation(obj, 0, len, orderBy);
+      console.log("placing at %@ from %@".fmt(idx, len));
+    } else idx = len;
+    
+    this.insertAt(idx, obj) ;
+    return obj ;
   },
   
   /*
@@ -169,6 +194,42 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
   // ..........................................................
   // INTERNAL SUPPORT
   //  
+  
+  // binary search to find insertion location
+  _findInsertionLocation: function(rec, min, max, orderBy) {
+    var idx   = min+Math.floor((max-min)/2),
+        cur   = this.objectAt(idx),
+        order = this._compare(rec, cur, orderBy);
+
+    if (order < 0) {
+      if (idx===min) return idx;
+      else return this._findInsertionLocation(rec, min, idx, orderBy);
+    } else if (order > 0) {
+      if (idx >= max) return idx;
+      else return this._findInsertionLocation(rec, idx+1, max, orderBy);
+    } else return idx;
+  },
+
+  _compare: function(a, b, orderBy) {
+    var t = SC.typeOf(orderBy),
+        ret, idx, len;
+    if (t === SC.T_FUNCTION) ret = orderBy(a, b);
+    else if (t === SC.T_STRING) {
+      aValue = a ? (a.get ? a.get(orderBy) : a[orderBy]) : null;
+      bValue = b ? (b.get ? b.get(orderBy) : b[orderBy]) : null;
+      ret = SC.compare(aValue, bValue);
+    } else {
+      len = orderBy.get('length');
+      ret = 0;
+      for(idx=0;(ret===0) && (idx<len);idx++) {
+        key = orderBy[idx];
+        aValue = a ? (a.get ? a.get(key) : a[key]) : null;
+        bValue = b ? (b.get ? b.get(key) : b[key]) : null;
+        ret = SC.compare(aValue, bValue);
+      } 
+    }
+    return ret ;
+  },
   
   /** @private
     Call to create an object from a hash
