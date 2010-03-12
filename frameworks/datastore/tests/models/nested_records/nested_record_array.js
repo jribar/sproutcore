@@ -241,6 +241,33 @@ test("Basic Write: reference tests", function() {
    same(readAttrsArray[0], newCR.get('attributes'), "after a set('name', <new>) on child, readAttribute on the parent should be correct for info child attributes");
 });
 
+test("Nested Store Support", function() {
+  //testParent.get('elements').objectAt(0).get('name');
+
+  var elemsAry = testParent.readAttribute('elements');
+  equals(elemsAry[0].name,"Child 1", "check to see if the first child is as expected in the root store"); 
+
+  var nestedStore = store.chain();
+  var nestedStoreTestParent = nestedStore.find(testParent);
+  nestedStoreTestParent.get('elements').objectAt(0).set('name', 'Child Name Change');
+
+  equals(nestedStoreTestParent.get('elements').objectAt(0).get('name'),"Child Name Change", "check to see if the first child is as expected in the nested store with get"); 
+
+  elemsAry = nestedStoreTestParent.readAttribute('elements');
+  equals(elemsAry[0].name,"Child Name Change", "check to see if the first child is as expected in the nested store"); 
+
+  elemsAry = testParent.readAttribute('elements');
+  equals(elemsAry[0].name,"Child 1", "check to see if the first child is as expected in the root store"); 
+
+  nestedStore.commitChanges();
+
+  elemsAry = testParent.readAttribute('elements');
+  equals(elemsAry[0].name,"Child Name Change", "check to see if the first child is as expected in the root store after the nested store has committed it's changes"); 
+
+  equals(testParent.get('elements').objectAt(0).get('name'),"Child Name Change", "check to see if the first child is as expected in the root store with get"); 
+
+});
+
 test("Basic Array Functionality: pushObject", function() {   
   var elements, elementsAttrs, cr, crFirst, crLast;
   // Add something to the array
