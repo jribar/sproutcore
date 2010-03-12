@@ -48,7 +48,10 @@ SC.Validator.Number = SC.Validator.extend(
         if (value.length === 0) {
           value = null ;
         } else if (this.get('places') > 0) {
-          value = parseFloat(value) ;
+          // Return a float with this.get('places') precision.
+          // Required since fieldValueForObject will only display the specified precision.
+          //value = parseFloat(parseFloat(value).toFixed(this.get('places')));
+          value = parseFloat(value);
         } else {
           if(value.length==1 && value.match(/-/)) value = null;
           else {
@@ -91,7 +94,8 @@ SC.Validator.Number = SC.Validator.extend(
       else return text.match(/^[\-{0,1}]?[0-9,\0]*/)[0]===text;
     }else {
       if(charStr.length===0) return true;
-      else return text.match(/^[\-{0,1}]?[0-9,\0]*\.?[0-9\0]+/)===text;
+      //if(text.match(/\./) && text.split(".")[1].length > this.get('places')) return false;
+      else return text.match(/^[\-{0,1}]?[0-9,\0]*\.?[0-9\0]*/)[0]===text;
     }
   }
     
