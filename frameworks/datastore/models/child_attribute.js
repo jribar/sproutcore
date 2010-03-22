@@ -39,7 +39,7 @@ SC.ChildAttribute = SC.RecordAttribute.extend(
         cacheKey  = SC.keyFor('__kid__', SC.guidFor(this)),
         recordType  = this.get('typeClass');
     
-    if (parentRecord[cacheKey]) return parentRecord[cacheKey];
+    //if (parentRecord[cacheKey]) return parentRecord[cacheKey];
     
     if (!parentRecord) {
       throw 'SC.Child: Error during transform: Unable to retrieve parent record.';

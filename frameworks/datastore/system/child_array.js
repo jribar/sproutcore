@@ -260,10 +260,17 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     id = hash[pm];
     storeKey = store.storeKeyExists(recordType, id);
     if (storeKey){
+      store.readEditableDataHash(storeKey);+      store.writeDataHash(storeKey,hash);  // Copy record hash to data hash for nested stores
       ret = store.materializeRecord(storeKey);
+      //  Issue here:  If a child record has been created in a parent store, it's dataHash is from
+      //  the parent's data hash.  When a child is materialized in a nested store, it's dataHash
+      //  is cloned from the data hash of the parent store breaking the link between parent record hash and
+      //  child record hash
     } 
     else {
       ret = parentRecord.registerChildRecord(recordType, hash);
+      //  Issue here:  If we're in a nested store, this record hasn't been created in a parent store.
+      //  the the issue above comes into play.  This sucks
     }
     return ret;
   },

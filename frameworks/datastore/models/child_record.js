@@ -62,7 +62,7 @@ SC.ChildRecord = SC.Record.extend(
     var pStatus = SC.Record.EMPTY;
     if (this._parentRecord) {
       pStatus = this._parentRecord.get('status');
-      this.store.writeStatus(this.storeKey, pStatus);
+      //this.store.writeStatus(this.storeKey, pStatus);
       this.store.dataHashDidChange(this.storeKey);
     } else {
       pStatus = this.store.readStatus(this.storeKey);
