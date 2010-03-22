@@ -43,7 +43,7 @@ SC.ChildrenAttribute = SC.ChildAttribute.extend(
     // lazily create a ManyArray one time.  after that always return the 
     // same object.
     if (!ret) {
-      if (!SC.none(orderBy)) {
+      if (!SC.none(orderBy) && !SC.none(record) && !SC.none(attrKey) && !SC.none(record.readAttribute(attrKey))) {
         record.writeAttribute(attrKey,record.readAttribute(attrKey).sortProperty(orderBy), 1);
       }
       ret = SC.ChildArray.create({ 
