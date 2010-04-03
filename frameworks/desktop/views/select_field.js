@@ -239,9 +239,35 @@ SC.SelectFieldView = SC.FieldView.extend(
    
   $input: function() { return this.$(); },
    
+  // ..........................................................
+  // FIRST RESPONDER SUPPORT
+  //
+  // When we become first responder, make sure the field gets focus and
+  // the hint value is hidden if needed.
+
+  acceptsFirstResponder: function() {
+    if(!SC.SAFARI_FOCUS_BEHAVIOR) return this.get('isEnabled');
+    return NO;
+  }.property('isEnabled'), 
+
+  // when we become first responder, focus the text field if needed and
+  // hide the hint text.
+  /** @private */
+  willBecomeKeyResponderFrom: function(keyView) {
+    if(this.get('isVisibleInWindow')) {
+      this.fieldDidFocus();
+    }
+  },
+
+  // when we lose first responder, blur the text field if needed and show
+  // the hint text if needed.
+  /** @private */
+  didLoseKeyResponderTo: function(keyView) {
+    this.fieldDidBlur();
+  },
+   
   /* @private */
   mouseDown: function(evt) {
-    
     if (!this.get('isEnabled')) {
       evt.stop();
       return YES;
@@ -294,11 +320,7 @@ SC.SelectFieldView = SC.FieldView.extend(
     this.$input().val(newValue);
     return this ;
   },
-  
-  
-  
- 
-  
+   
   fieldDidFocus: function() {
     var isFocused = this.get('isFocused');
     if (!isFocused) this.set('isFocused', true);
@@ -309,8 +331,6 @@ SC.SelectFieldView = SC.FieldView.extend(
     if (isFocused) this.set('isFocused', false);
   },
 
-
-  
   _isFocusedObserver: function() {
     this.$().setClass('focus', this.get('isFocused'));
   }.observes('isFocused'),
