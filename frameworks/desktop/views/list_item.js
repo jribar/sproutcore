@@ -100,6 +100,13 @@ SC.ListItemView = SC.View.extend(
   contentValueKey: null,
   
   /**
+    (displayDelegate) The name of the property that contains a CSS Class Name.
+    
+    This property allows a CSS Class to be applied on a row-by-row basis.
+  */
+  classNameKey: null,
+  
+  /**
     IF true, the label value will be escaped to avoid HTML injection attacks.
     You should only disable this option if you are sure you will only 
     display content that is already escaped and you need the added 
@@ -193,6 +200,14 @@ SC.ListItemView = SC.View.extend(
     // add alternating row classes
     classArray.push((this.get('contentIndex')%2 === 0) ? 'even' : 'odd');
     context.setClass('disabled', !this.get('isEnabled'));
+
+    // add custom class key
+    key = this.getDelegateProperty('classNameKey', del) ;
+    if (key) {
+      value = content ? (content.get ? content.get(key) : content[key]) : NO ;
+      classArray.push(value);
+    }
+
 
     // outline level wrapper
     working = context.begin("div").addClass("sc-outline");
