@@ -282,11 +282,10 @@ SC.SelectFieldView = SC.FieldView.extend(
     var objects = this.get('objects') ;
     var found = null; // matching object goes here.
     var object;
-    
     // Handle empty selection.
     if (value == '***') {
       value = null ;
-    
+      return value;
     // If no value key was set and there are objects then match back to an
     // object.
     } else if (value && objects) {
@@ -307,7 +306,6 @@ SC.SelectFieldView = SC.FieldView.extend(
         if (value == ov) found = object ;
       }
     }
-    
     return (valueKey || found) ? found : value;
   },
   
