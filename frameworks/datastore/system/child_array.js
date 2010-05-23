@@ -175,7 +175,6 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     // find idx to insert at.
     if (orderBy) {
       idx = this._findInsertionLocation(obj, 0, len, orderBy);
-      console.log("placing at %@ from %@".fmt(idx, len));
     } else idx = len;
     
     this.insertAt(idx, obj) ;
