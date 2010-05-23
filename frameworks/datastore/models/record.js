@@ -442,6 +442,12 @@ SC.Record = SC.Object.extend(
     //        appropriate times?
     if (statusOnly) this.notifyPropertyChange('status');
     else {      
+      // Notify manyArrays
+      var manyArrays = this.relationships,
+          loc        = manyArrays ? manyArrays.length : 0 ;
+      while(--loc>=0) manyArrays[loc].recordPropertyDidChange(keys);
+
+      // Notifiy properies
       if (keys) {
         this.beginPropertyChanges();
         keys.forEach(function(k) { this.notifyPropertyChange(k); }, this);
@@ -449,11 +455,6 @@ SC.Record = SC.Object.extend(
         this.endPropertyChanges();
 
       } else this.allPropertiesDidChange(); 
-    
-      // also notify manyArrays
-      var manyArrays = this.relationships,
-          loc        = manyArrays ? manyArrays.length : 0 ;
-      while(--loc>=0) manyArrays[loc].recordPropertyDidChange(keys);
     }
   },
   
