@@ -226,9 +226,9 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
   },
   
   __compare: function(a, b, orderBy) {
-    var dir='ASC', aValue, bValue;
+    var dir='ASC', aValue, bValue, res;
     
-    if (dir = orderBy.match(/^(ASC|DESC) (.*)$/)) { orderBy = dir[2]; dir = dir[1]; }
+    if (res = orderBy.match(/^(ASC|DESC) (.*)$/)) { orderBy = res[2]; dir = res[1]; }
     aValue = a ? (a.get ? a.get(orderBy) : a[orderBy]) : null;
     bValue = b ? (b.get ? b.get(orderBy) : b[orderBy]) : null;
     return (dir == 'ASC') ? SC.compare(aValue, bValue) : SC.compare(bValue, aValue);
