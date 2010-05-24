@@ -215,7 +215,7 @@ SC.ListView = SC.CollectionView.extend(
     if (del.customRowHeightIndexes && (custom=del.get('customRowHeightIndexes'))) {
       
       // prefill the cache with custom rows.
-      cache = this._sclv_offsetCache;
+      cache = this._sclv_offsetCache = null;
       if (!cache) {
         cache = [];
         delta = max = 0 ;
