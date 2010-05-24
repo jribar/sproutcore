@@ -323,7 +323,7 @@ SC.Enumerable = {
   sortProperty: function(key) {
     var keys = (typeof key === SC.T_STRING) ? arguments : key,
         len  = keys.length,
-        src;
+        src, res;
      
     // get the src array to sort   
     if (this instanceof Array) src = this;
@@ -338,7 +338,7 @@ SC.Enumerable = {
       
       for(idx=0;ret===0 && idx<len;idx++) {
         key = keys[idx];
-        if (dir = key.match(/^(ASC|DESC) (.*)$/)) { key = dir[2]; dir = dir[1]; }
+        if (res = key.match(/^(ASC|DESC) (.*)$/)) { key = res[2]; dir = res[1]; }
         aValue = a ? (a.get ? a.get(key) : a[key]) : null;
         bValue = b ? (b.get ? b.get(key) : b[key]) : null;
         ret = (dir == 'ASC') ? SC.compare(aValue, bValue) : SC.compare(bValue, aValue);
