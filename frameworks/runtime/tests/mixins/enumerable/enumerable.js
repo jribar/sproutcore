@@ -385,6 +385,58 @@ test("should groupBy a given property", function () {
   }
 });
 
+test("should sortProperty in ascending order by default", function() {
+  var src, ary2 = enumerables ;
+  for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
+    src = ary2[idx2] ;
+    var sorted = src.sortProperty("first") ;
+    equals(sorted.length, 4) ;
+    equals(sorted[0].first, "Charles") ;
+    equals(sorted[1].first, "Chris") ;
+    equals(sorted[2].first, "Jenna") ;
+    equals(sorted[3].first, "Peter") ;
+  }  
+});
+
+test("should sortProperty in ascending order", function() {
+  var src, ary2 = enumerables ;
+  for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
+    src = ary2[idx2] ;
+    var sorted = src.sortProperty("first ASC") ;
+    equals(sorted.length, 4) ;
+    equals(sorted[0].first, "Charles") ;
+    equals(sorted[1].first, "Chris") ;
+    equals(sorted[2].first, "Jenna") ;
+    equals(sorted[3].first, "Peter") ;
+  }  
+});
+
+test("should sortProperty in descending order", function() {
+  var src, ary2 = enumerables ;
+  for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
+    src = ary2[idx2] ;
+    var sorted = src.sortProperty("first DESC") ;
+    equals(sorted.length, 4) ;
+    equals(sorted[0].first, "Peter") ;
+    equals(sorted[1].first, "Jenna") ;
+    equals(sorted[2].first, "Chris") ;
+    equals(sorted[3].first, "Charles") ;
+  }  
+});
+
+test("should sortProperty with multiple sort parameters", function() {
+  var src, ary2 = enumerables ;
+  for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
+    src = ary2[idx2] ;
+    var sorted = src.sortProperty("gender", "first DESC") ;
+    equals(sorted.length, 4) ;
+    // First females, them males with first names in descending order.
+    equals(sorted[0].first, "Jenna") ;
+    equals(sorted[1].first, "Peter") ;
+    equals(sorted[2].first, "Chris") ;
+    equals(sorted[3].first, "Charles") ;
+  }  
+});
 
 test("everyProperty should return true if all properties macth", function () {
   var src, ary2 = enumerables;
