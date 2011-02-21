@@ -324,7 +324,9 @@ SC.Enumerable = /** @scope SC.Enumerable.prototype */{
   /**
     Returns an array sorted by the value of the passed key parameters.
     null objects will be sorted first.  You can pass either an array of keys
-    or multiple parameters which will act as key names
+    or multiple parameters which will act as key names.  Key names can optionally
+    end with the strings " DESC" or " ASC" to select descending or
+    ascending order.  Defaults to ascending order.
 
     @param {String} key one or more key names
     @returns {Array}
@@ -347,9 +349,15 @@ SC.Enumerable = /** @scope SC.Enumerable.prototype */{
 
       for (idx = 0; ret === 0 && idx < len; idx++) {
         key = keys[idx];
+        if (dir = key.match(/^([^ ]+) (ASC|DESC)$/)) { 
+          key = dir[1]; 
+          dir = dir[2]; 
+        } else { 
+          dir = 'ASC'; 
+        }
         aValue = a ? (a.get ? a.get(key) : a[key]) : null;
         bValue = b ? (b.get ? b.get(key) : b[key]) : null;
-        ret = SC.compare(aValue, bValue);
+        ret = (dir === 'ASC') ? SC.compare(aValue, bValue) : SC.compare(bValue, aValue);
       }
       return ret;
     });
