@@ -191,11 +191,14 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
       }
       value = ary.join(',') ;
     }
-
-    // 3. If value is not a string, convert to string. (handles 0)
+    
+    // 3. If the value is null or undefined, display an empty string.
+    if (SC.none(value)) value = '' ;
+    
+    // 4. If value is not a string, convert to string. (handles 0)
     if (!SC.none(value) && value.toString) value = value.toString() ;
-
-    // 4. Localize
+    
+    // 5. Localize
     if (value && this.getDelegateProperty('localize', this.displayDelegate)) value = SC.String.loc(value) ;
 
     return value;
