@@ -329,7 +329,7 @@ SC.ButtonView = SC.View.extend(SC.Control,
     @type Boolean
     @default NO
   */
-  supportFocusRing: NO,
+  supportFocusRing: YES,
 
   // ..........................................................
   // Auto Resize Support
