@@ -13,7 +13,7 @@
   @since SproutCore 1.1
 */
 
-SC.TableRowView = SC.View.extend({
+SC.TableRowView = SC.View.extend(SC.Control,{
 /** @scope SC.TableRowView.prototype */ 
 
   //layout: { height: 18, left: 0, right: 0, top: 0 },
