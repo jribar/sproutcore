@@ -492,6 +492,13 @@ test("Use in Nested Store With lockOnRead: NO", function(){
   equals(nRootDir.readOnlyAttributes().contents[0].contents[0].name, 'Change Name', "Nested > Parent Dir id: 1 has the updated name in it's data hash");
   equals(nRootDir.readOnlyAttributes().contents[0].contents[0].description, 'Change Desc', "Nested > Parent Dir id: 1 has the updated description in it's data hash");
   
+  // Verify that changes haven't been made to the record in the root store
+  dir = store.find(NestedRecord.Directory, 1);
+  file = dir.get('contents').objectAt(0).get('contents').objectAt(0);
+  ok(file, "File id:1 exists"); 
+  equals(file.get('name'), 'File 1', "File id:1 has a name of 'File 1'");
+  equals(file.get('description'), 'Desc 1', "File id:1 has a description of 'Desc 1'");
+  
   // Third, commit the changes
   nstore.commitChanges();
   nstore.destroy();
@@ -504,5 +511,97 @@ test("Use in Nested Store With lockOnRead: NO", function(){
   equals(file.get('status'), SC.Record.READY_DIRTY, 'Base > File id:1 has a READY_DIRTY State');
   equals(file.get('name'), 'Change Name', "Base > File id:1 has actually changed to name of 'Changed Name'");
   equals(file.get('description'), 'Change Desc', "Base > File id:1 has actually changed to description of 'Changed Desc'");
+  
+});
+
+test("Use in Nested Store With lockOnRead: NO to Test Propagating Changes From Root to Nested Store", function(){
+  var nstore, dir, c, file,
+      pk, id, nFile, nDir;
+  
+  // First, find the first file
+  dir = store.find(NestedRecord.Directory, 1);
+  ok(dir, "Directory id:1 exists"); 
+  equals(dir.get('name'), 'Dir 1', "Directory id:1 has a name of 'Dir 1'");
+  c = dir.get('contents');
+  ok(c, "Content of Directory id:1 exists");
+  dir = c.objectAt(0);
+  ok(dir, "Directory id:2 exists"); 
+  equals(dir.get('name'), 'Dir 2', "Directory id:2 has a name of 'Dir 2'");
+  c = dir.get('contents');
+  ok(c, "Content of Directory id:2 exists");
+  file = c.objectAt(0);
+  ok(file, "File id:1 exists"); 
+  equals(file.get('name'), 'File 1', "File id:1 has a name of 'File 1'");
+  
+  // Second, create nested store
+  nstore = store.chain().set('lockOnRead', NO);
+  SC.RunLoop.begin();
+  pk = file.get('primaryKey');
+  id = file.get(pk);
+  nFile = nstore.find(NestedRecord.File, id);
+  SC.RunLoop.end();
+  ok(nFile, "Nested > File id:1 exists"); 
+  equals(nFile.get('name'), 'File 1', "Nested > File id:1 has a name of 'File 1'");
+  
+  // Third, change the name of the root store and see what happens
+  file.set('name', 'Change Name');
+  equals(file.get('name'), 'Change Name', "Base > File id:1 has changed the name to 'Changed Name'");
+  equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has changed the name to 'Changed Name'");
+  
+  // Fourth, commit the changes
+  store.commitRecords();
+  equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has changed the name to 'Changed Name'");
+  
+  // Fifth, double check that the change exists in the child stores
+  nDir = nstore.find(NestedRecord.Directory, 1);
+  nFile = nDir.get('contents').objectAt(0).get('contents').objectAt(0);
+  equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has actually changed to name of 'Changed Name'");
+});
+
+test("Use in Nested Store With lockOnRead: NO and Reset Nested Store Instead of Commiting Changes", function(){
+  var nstore, dir, c, file,
+      pk, id, nFile, nDir, nRootDir;
+
+  // First, load the file
+  dir = store.find(NestedRecord.Directory, 1);
+  file = dir.get('contents').objectAt(0).get('contents').objectAt(0);
+  ok(file, "File id:1 exists"); 
+  equals(file.get('name'), 'File 1', "File id:1 has a name of 'File 1'");
+  
+  // Second, create nested store and find the file
+  nstore = store.chain().set('lockOnRead', NO);
+  SC.RunLoop.begin();
+  nRootDir = nDir = nstore.find(NestedRecord.Directory, 1);
+  SC.RunLoop.end();
+  nFile = nDir.get('contents').objectAt(0).get('contents').objectAt(0);
+  ok(nFile, "Nested > File id:1 exists"); 
+  equals(nFile.get('name'), 'File 1', "Nested > File id:1 has a name of 'File 1'");
+  
+  // Third, change the name of the nested store and see what happens
+  nFile.set('name', 'Change Name');
+  equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has changed the name to 'Changed Name'");
+  equals(nFile.get('name'), nFile.readAttribute('name'), "Nested > File id:1 has updated the underlying data hash for name");
+  equals(nRootDir.readOnlyAttributes().contents[0].contents[0].name, 'Change Name', "Nested > Parent Dir id: 1 has the updated name in it's data hash");
+  
+  // Fourth, destroy the store, and create a new store
+  nstore.discardChanges();
+  nstore.destroy();
+  nstore = store.chain();
+  SC.RunLoop.begin();
+  nDir = nstore.find(NestedRecord.Directory, 1);
+  nFile = nDir.get('contents').objectAt(0).get('contents').objectAt(0);
+  SC.RunLoop.end();
+
+  // Fifth, load the record in the root store and verify changes have not been been made.
+  dir = store.find(NestedRecord.Directory, 1);
+  file = dir.get('contents').objectAt(0).get('contents').objectAt(0);
+  equals(dir.get('status'), SC.Record.READY_CLEAN, 'Base > Directory id:1 has a READY_CLEAN State');
+  equals(file.get('status'), SC.Record.READY_CLEAN, 'Base > File id:1 has a READY_CLEAN State');
+  equals(nDir.get('status'), SC.Record.READY_CLEAN, 'Nested > Directory id:1 has a READY_CLEAN State');
+  equals(nFile.get('status'), SC.Record.READY_CLEAN, 'Nested > File id:1 has a READY_CLEAN State');
+  equals(file.get('name'), 'File 1', "Base > File id:1 has not actually changed name.");
+  equals(nFile.get('name'), 'File 1', "Nested > File id:1 has not actually changed name.");
+  equals(dir.readOnlyAttributes().contents[0].contents[0].name, 'File 1', "Base > Parent Dir id: 1 has not actually changed name in the data hash");
+  equals(nDir.readOnlyAttributes().contents[0].contents[0].name, 'File 1', "Nested > Parent Dir id: 1 has not actually changed name in the data hash");
   
 });

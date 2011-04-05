@@ -321,7 +321,7 @@ SC.Record = SC.Object.extend(
   refresh: function(recordOnly, callback) {
     var store = this.get('store'), rec, ro,
         sk = this.get('storeKey'),
-        prKey = store.parentStoreKeyExists();
+        prKey = store.parentStoreKeyExists(sk);
 
     // If we only want to commit this record or it doesn't have a parent record
     // we will commit this record
@@ -586,6 +586,7 @@ SC.Record = SC.Object.extend(
   storeDidChangeProperties: function(statusOnly, keys) {
     // TODO:  Should this function call propagateToAggregates() at the
     //        appropriate times?
+
     if (statusOnly) this.notifyPropertyChange('status');
     else {
       if (keys) {
