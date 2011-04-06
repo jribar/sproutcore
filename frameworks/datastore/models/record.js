@@ -888,7 +888,8 @@ SC.Record = SC.Object.extend(
       store = this.get('store');
       csk = childRecord.get('storeKey');
       store.registerChildToParent(psk, csk, path);
-      if(childRecord.get('status') & SC.Record.CLEAN && store.locks && store.locks[csk]) {
+      if(childRecord.get('status') & SC.Record.CLEAN && store.locks && store.locks[csk] && !store.get('lockOnRead')) {
+        // Remove lock if we don't lockOnRead and the child record is clean.
         store.locks[csk] = undefined;
       }
     }
