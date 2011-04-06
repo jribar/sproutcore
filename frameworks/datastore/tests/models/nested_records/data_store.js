@@ -520,42 +520,44 @@ test("Use in Nested Store With lockOnRead: NO to Test Propagating Changes From R
   
   // First, find the first file
   dir = store.find(NestedRecord.Directory, 1);
-  ok(dir, "Directory id:1 exists"); 
-  equals(dir.get('name'), 'Dir 1', "Directory id:1 has a name of 'Dir 1'");
-  c = dir.get('contents');
-  ok(c, "Content of Directory id:1 exists");
-  dir = c.objectAt(0);
-  ok(dir, "Directory id:2 exists"); 
-  equals(dir.get('name'), 'Dir 2', "Directory id:2 has a name of 'Dir 2'");
-  c = dir.get('contents');
-  ok(c, "Content of Directory id:2 exists");
-  file = c.objectAt(0);
-  ok(file, "File id:1 exists"); 
+  file = dir.get('contents').objectAt(0).get('contents').objectAt(0);
   equals(file.get('name'), 'File 1', "File id:1 has a name of 'File 1'");
   
   // Second, create nested store
   nstore = store.chain().set('lockOnRead', NO);
   SC.RunLoop.begin();
-  pk = file.get('primaryKey');
-  id = file.get(pk);
-  nFile = nstore.find(NestedRecord.File, id);
+  nDir = nstore.find(NestedRecord.Directory, 1);
   SC.RunLoop.end();
+  
+  // Third, let's prove the base case by changing the name of the root directory in the root store and see what happens
+  dir.set('name', 'Change Name');
+  equals(dir.get('name'), 'Change Name', "Base > Dir id:1 has changed the name to 'Changed Name'");
+  equals(nDir.get('name'), 'Change Name', "Nested > Dir id:1 has changed the name to 'Changed Name'");
+  equals(dir.readAttribute('name'), 'Change Name', "Base > Dir id:1 has changed the attribute name to 'Changed Name'");
+  equals(nDir.readAttribute('name'), 'Change Name', "Nested > Dir id:1 has changed the attribute name to 'Changed Name'");
+
+  // Fourth, let's get the file in the nested store
+  nFile = nDir.get('contents').objectAt(0).get('contents').objectAt(0);
   ok(nFile, "Nested > File id:1 exists"); 
   equals(nFile.get('name'), 'File 1', "Nested > File id:1 has a name of 'File 1'");
-  
-  // Third, change the name of the root store and see what happens
+
+  // Fifth, lets change the name of the file in the root store and see what happens
   file.set('name', 'Change Name');
+  //nFile.allPropertiesDidChange();
   equals(file.get('name'), 'Change Name', "Base > File id:1 has changed the name to 'Changed Name'");
   equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has changed the name to 'Changed Name'");
-  
-  // Fourth, commit the changes
+  equals(file.readAttribute('name'), 'Change Name', "Base > File id:1 has changed the attribute name to 'Changed Name'");
+  equals(nFile.readAttribute('name'), 'Change Name', "Nested > File id:1 has changed the attribute name to 'Changed Name'");
+
+  // Sixth, commit the changes and see if it changes
   store.commitRecords();
   equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has changed the name to 'Changed Name'");
   
-  // Fifth, double check that the change exists in the child stores
+  // Seventh, double check that the change exists in the child stores
   nDir = nstore.find(NestedRecord.Directory, 1);
   nFile = nDir.get('contents').objectAt(0).get('contents').objectAt(0);
   equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has actually changed to name of 'Changed Name'");
+  equals(nFile.readAttribute('name'), 'Change Name', "Nested > File id:1 has changed the attribute name to 'Changed Name'");
 });
 
 test("Use in Nested Store With lockOnRead: NO and Reset Nested Store Instead of Commiting Changes", function(){
