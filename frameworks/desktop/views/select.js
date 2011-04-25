@@ -624,7 +624,8 @@ SC.SelectView = SC.ButtonView.extend(
     className = customViewClassName ? (className + ' ' + customViewClassName) : className;
 
     SC.prepareStringMeasurement("", className);
-    for (idx = 0, itemsLength = items.length; idx < itemsLength; ++idx) {
+    var titles = items.getEach('title').sort(function(a,b) { return (a.length > b.length) ? -1 : 1;});
+    for (idx = 0, itemsLength = Math.min(titles.length, 5); idx < itemsLength; ++idx) {
       //getting the width of largest menu item
       item = items.objectAt(idx);
       elementOffsetWidth = SC.measureString(item.title).width;
