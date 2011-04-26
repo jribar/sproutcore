@@ -374,6 +374,7 @@ SC.SelectView = SC.ButtonView.extend(
   sortObjects: function (objects) {
     if (!this.get('disableSort')){
       var nameKey = this.get('itemSortKey') || this.get('itemTitleKey');
+      objects = !SC.none(objects) ? objects.toArray() : [];
       objects = objects.sort(function (a,b) {
         if (nameKey) {
           a = a.get ? a.get(nameKey) : a[nameKey];
