@@ -379,7 +379,7 @@ SC.SelectView = SC.ButtonView.extend(
           a = a.get ? a.get(nameKey) : a[nameKey];
           b = b.get ? b.get(nameKey) : b[nameKey];
         }
-        return (a<b) ? -1 : ((a>b) ? 1 : 0);
+        return SC.compare(a, b);
       });
     }
     return objects;
