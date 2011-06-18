@@ -1138,7 +1138,10 @@ SC.RootResponder = SC.Object.extend(
 
   assignTouch: function(touch, view) {
     // sanity-check
+    // @if (debug)
     if (touch.hasEnded) throw new Error("Attempt to assign a touch that is already finished.");
+    // @endif
+    if (touch.hasEnded) return;
 
     // unassign from old view if necessary
     if (touch.view === view) return;
