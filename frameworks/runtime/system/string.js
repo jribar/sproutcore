@@ -89,7 +89,8 @@ SC.String = /** @scope SC.String.prototype */ {
     if (args) {
       data = args[0];
     }
-    
+
+    if (SC.none(string)) return;    
     return string.replace(/%\{(.*?)\}/g, function(match, propertyPath) {
       hasHadNamedArguments = YES;
       if (!data) {
