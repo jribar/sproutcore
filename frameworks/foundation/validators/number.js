@@ -89,12 +89,11 @@ SC.Validator.Number = SC.Validator.extend(
     if (!text) text='';
     text+=charStr;
 
+    if(charStr.length===0) return true;
     if(this.get('places')===0){
-      if(charStr.length===0) return true;
-      else return text.match(/^[\-{0,1}]?[0-9,\0]*/)[0]===text;
-    }else {
-      if(charStr.length===0) return true;
-      else return text.match(/^[\-{0,1}]?[0-9,\0]*\.?[0-9\0]+/)===text;
+      return text.match(/^[\-{0,1}]?[0-9,\0]*/)[0]===text;
+    } else {
+      return text.match(/^[\-{0,1}]?[0-9,\0]*\.?[0-9\0]*/)[0]===text;
     }
   }
     
