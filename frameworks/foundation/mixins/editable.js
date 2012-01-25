@@ -145,6 +145,7 @@ SC.Editable = {
   commitEditing: function() {
     if (!this.get('isEditing')) return YES;
     this.set('isEditing', NO) ;
+    this.fieldValueDidChange(NO);
     this.resignFirstResponder();
 
     return YES ;
