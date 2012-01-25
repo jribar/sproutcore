@@ -269,6 +269,14 @@ SC.ButtonView = SC.View.extend(SC.Control,
   buttonBehavior: SC.PUSH_BEHAVIOR,
 
   /*
+    Should we become the first repsonder when the button is pressed.
+
+    @type Boolean
+    @default NO
+  */
+  focusOnPush: NO,
+
+  /*
     If buttonBehavior is `SC.HOLD_BEHAVIOR`, this specifies, in milliseconds,
     how often to trigger the action. Ignored for other behaviors.
 
@@ -644,7 +652,7 @@ SC.ButtonView = SC.View.extend(SC.Control,
 
     if (buttonBehavior === SC.HOLD_BEHAVIOR) {
       this._action(evt);
-    } else if (!this._isFocused && (buttonBehavior!==SC.PUSH_BEHAVIOR)) {
+    } else if (!this._isFocused && (buttonBehavior!==SC.PUSH_BEHAVIOR || this.get('focusOnPush'))) {
       this._isFocused = YES ;
       this.becomeFirstResponder();
     }
@@ -696,7 +704,7 @@ SC.ButtonView = SC.View.extend(SC.Control,
 
     if (buttonBehavior === SC.HOLD_BEHAVIOR) {
       this._action(touch);
-    } else if (!this._isFocused && (buttonBehavior!==SC.PUSH_BEHAVIOR)) {
+    } else if (!this._isFocused && (buttonBehavior!==SC.PUSH_BEHAVIOR || this.get('focusOnPush'))) {
       this._isFocused = YES ;
       this.becomeFirstResponder();
     }
