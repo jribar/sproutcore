@@ -79,6 +79,12 @@ SC.WorkspaceView = SC.View.extend(
     @type Number
     @default 44
   */
+  bottomToolbarSize: 53,
+
+  /**
+    @type Number
+    @default 44
+  */
   largeToolbarSize: 44,
 
   /**
@@ -172,22 +178,23 @@ SC.WorkspaceView = SC.View.extend(
         topToolbar = this.get("topToolbar"),
         bottomToolbar = this.get("bottomToolbar"),
         content = this.get("contentView"),
-        toolbarSize = this.get("toolbarSize");
+        topToolbarSize = this.get("toolbarSize"),
+        bottomToolbarSize = this.get("bottomToolbarSize");
 
       // basically, if there is a top toolbar, we position it and change contentTop.
     if (topToolbar) {
       topToolbar.set("layout", {
-        left: 0, right: 0, top: 0, height: toolbarSize
+        left: 0, right: 0, top: 0, height: topToolbarSize
       });
-      contentTop += toolbarSize;
+      contentTop += topToolbarSize;
     }
 
     // same for bottom
     if (bottomToolbar) {
       bottomToolbar.set("layout", {
-        left: 0, right: 0, bottom: 0, height: toolbarSize
+        left: 0, right: 0, bottom: 0, height: bottomToolbarSize
       });
-      contentBottom += toolbarSize;
+      contentBottom += bottomToolbarSize;
     }
 
     // finally, position content
