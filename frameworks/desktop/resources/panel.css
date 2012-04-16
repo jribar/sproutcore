@@ -1,5 +1,13 @@
 /** SC.Panel Support */
 
+.sc-pane.sc-modal.for-sc-panel {
+  background: black;
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"; 
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
+}
+
 .sc-pane.sc-panel {
   overflow: visible;
   z-index: 100;
