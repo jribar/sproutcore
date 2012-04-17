@@ -9,6 +9,7 @@
       right: 25px;
       vertical-align: top;
       color: #333;
+      text-shadow: 0px 1px 1px white;
     }
 
     &.sel, &.sel.active, &.active {
