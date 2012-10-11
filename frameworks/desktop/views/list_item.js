@@ -218,6 +218,13 @@ SC.ListItemView = SC.View.extend(SC.InlineEditable, SC.Control,
   contentIsBranchKey: null,
 
   /**
+    (displayDelegate)  The name of the property that contains a CSS Class Name.
+    
+    This property allows a CSS Class to applied on a row-by-row basis.
+  */
+  classNameKey: null,
+
+  /**
     Indent to use when rendering a list item with an outline level > 0.  The
     left edge of the list item will be indented by this amount for each
     outline level.
@@ -764,6 +771,15 @@ SC.ListItemView = SC.View.extend(SC.InlineEditable, SC.Control,
     working = context.begin("div").addClass("sc-outline");
     if (level >= 0 && indent > 0) working.addStyle("left", indent * (level + 1));
 
+    // handle custom class key
+    key = this.getDelegateProperty('classNameKey', del);
+    if (key) {
+      value = content ? (content.get ? content.get(key) : content[key]) : NO;
+      if (value !== null) {
+        classArray.push(value);        
+      }
+    }
+    
     // handle disclosure triangle
     value = this.get('disclosureState');
     if (value !== SC.LEAF_NODE) {
