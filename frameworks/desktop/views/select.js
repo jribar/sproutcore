@@ -190,6 +190,22 @@ SC.SelectView = SC.ButtonView.extend(
     @default null
   */
   emptyName: null,
+  
+  /**
+    if this property is set to 'YES', items with empty titles become separators.
+
+    @type Boolean
+    @default NO
+  */
+  emptyTitleIsSeparator: NO,
+  
+  /**
+    if this property is set to 'YES', itmes with empty values are disabled.
+
+    @type Boolean
+    @default NO
+  */
+  emptyValueIsDisabled: NO,
 
   /**
     Default value of the select button.
@@ -527,18 +543,18 @@ SC.SelectView = SC.ButtonView.extend(
             isChecked = NO;
           }
 
-          // Check if the item is enabled
-          itemEnabled = (object.get ? object.get(isEnabledKey) : object[isEnabledKey]);
-          if (NO !== itemEnabled) itemEnabled = YES;
+        // Check if the item is enabled
+        itemEnabled = (object.get ? object.get(isEnabledKey) : object[isEnabledKey]);
+        itemEnabled = (this.emptyValueIsDisabled === YES && SC.empty(value)) ? NO : itemEnabled;
+        if (NO !== itemEnabled) itemEnabled = YES;
 
-          // Set the first non-separator selectable item from the list as the
-          // default selected item
-          if (!hasSelectableFirstItem && SC.none(this._defaultVal) && itemEnabled && !isSeparator) {
-            this._defaultVal = value;
-            this._defaultTitle = name;
-            this._defaultIcon = icon;
-            hasSelectableFirstItem = YES;
-          }
+        // Set the first non-separator selectable item from the list as the
+        // default selected item
+        if (!hasSelectableFirstItem && itemEnabled && !isSeparator) {
+          this._defaultVal = value ;
+          this._defaultTitle = name ;
+          this._defaultIcon = icon ;
+          hasSelectableFirstItem = YES;
         }
 
         item = SC.Object.create({
