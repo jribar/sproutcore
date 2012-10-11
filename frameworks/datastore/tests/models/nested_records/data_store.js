@@ -579,9 +579,13 @@ test("Use in Nested Store With lockOnRead: NO and Reset Nested Store Instead of 
   
   // Third, change the name of the nested store and see what happens
   nFile.set('name', 'Change Name');
+  nFile.set('description', 'Change Desc');
   equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has changed the name to 'Changed Name'");
   equals(nFile.get('name'), nFile.readAttribute('name'), "Nested > File id:1 has updated the underlying data hash for name");
   equals(nRootDir.readOnlyAttributes().contents[0].contents[0].name, 'Change Name', "Nested > Parent Dir id: 1 has the updated name in it's data hash");
+  equals(nFile.get('description'), 'Change Desc', "Nested > File id:1 has changed the description to 'Changed Desc'");
+  equals(nFile.get('description'), nFile.readAttribute('description'), "Nested > File id:1 has updated the underlying data hash for description");
+  equals(nRootDir.readOnlyAttributes().contents[0].contents[0].description, 'Change Desc', "Nested > Parent Dir id: 1 has the updated description in it's data hash");
   
   // Fourth, destroy the store, and create a new store
   nstore.discardChanges();
@@ -603,5 +607,9 @@ test("Use in Nested Store With lockOnRead: NO and Reset Nested Store Instead of 
   equals(nFile.get('name'), 'File 1', "Nested > File id:1 has not actually changed name.");
   equals(dir.readOnlyAttributes().contents[0].contents[0].name, 'File 1', "Base > Parent Dir id: 1 has not actually changed name in the data hash");
   equals(nDir.readOnlyAttributes().contents[0].contents[0].name, 'File 1', "Nested > Parent Dir id: 1 has not actually changed name in the data hash");
+  equals(file.get('description'), 'Desc 1', "Base > File id:1 has not actually changed description.");
+  equals(nFile.get('description'), 'Desc 1', "Nested > File id:1 has not actually changed description.");
+  equals(dir.readOnlyAttributes().contents[0].contents[0].description, 'Desc 1', "Base > Parent Dir id: 1 has not actually changed description in the data hash");
+  equals(nDir.readOnlyAttributes().contents[0].contents[0].description, 'Desc 1', "Nested > Parent Dir id: 1 has not actually changed description in the data hash");
   
 });
