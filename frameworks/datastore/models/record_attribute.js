@@ -607,9 +607,9 @@ if (SC.DateTime && !SC.RecordAttribute.transforms[SC.guidFor(SC.DateTime)]) {
       Convert a DateTime to a String
     */
     from: function(dt, attr) {
-      if (SC.none(dt)) return dt;
-      if (attr.get('useUnixTime')) {
-        return dt.get('milliseconds')/1000;
+      if (SC.none(dt) || !SC.instanceOf(dt, SC.DateTime)) return dt;
+      if (attr.get('useUnixTime')) { 
+        return dt.get('milliseconds')/1000; 
       }
       var format = attr.get('format');
       return dt.toFormattedString(format ? format : SC.DateTime.recordFormat);
