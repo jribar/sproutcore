@@ -190,6 +190,22 @@ SC.SelectView = SC.ButtonView.extend(
     @default null
   */
   emptyName: null,
+  
+  /**
+    if this property is set to 'YES', items with empty titles become separators.
+
+    @type Boolean
+    @default NO
+  */
+  emptyTitleIsSeparator: NO,
+  
+  /**
+    if this property is set to 'YES', itmes with empty values are disabled.
+
+    @type Boolean
+    @default NO
+  */
+  emptyValueIsDisabled: NO,
 
   /**
     Default value of the select button.
@@ -473,14 +489,16 @@ SC.SelectView = SC.ButtonView.extend(
       }
       //@endif
 
+      //Get the name value. If value key is not specified convert obj
+      //to string
+      name = nameKey ? (object.get ?
+        object.get(nameKey) : object[nameKey]) : object.toString();
+
       // get the separator
       isSeparator = separatorKey ? (object.get ? object.get(separatorKey) : object[separatorKey]) : NO;
+      isSeparator = (this.emptyTitleIsSeparator === YES && SC.empty(name)) ? YES : isSeparator;
 
-        if (!isSeparator) {
-        //Get the name value. If value key is not specified convert obj
-        //to string
-        name = nameKey ? (object.get ?
-          object.get(nameKey) : object[nameKey]) : object.toString();
+      if (!isSeparator) {
 
         //@if(debug)
         // Help the developer if they don't define a matching itemTitleKey.
@@ -530,6 +548,7 @@ SC.SelectView = SC.ButtonView.extend(
 
         // Check if the item is enabled
         itemEnabled = (object.get ? object.get(isEnabledKey) : object[isEnabledKey]);
+        itemEnabled = (this.emptyValueIsDisabled === YES && SC.empty(value)) ? NO : itemEnabled;
         if (NO !== itemEnabled) itemEnabled = YES;
 
         // Set the first non-separator selectable item from the list as the
