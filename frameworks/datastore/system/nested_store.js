@@ -323,12 +323,12 @@ SC.NestedStore = SC.Store.extend(
     Locks the data hash so that it iterates independently from the parent
     store.
   */
-  _lock: function(storeKey) {
-    var locks = this.locks, rev, editables,
+  _lock: function(storeKey, forceLock) {
+    var locks = this.locks, rev, editables, 
         pk, pr, path, tup, obj, key;
 
     // already locked -- nothing to do
-    if (locks && locks[storeKey]) return this;
+    if (locks && locks[storeKey] && !forceLock) return this;
 
     // create locks if needed
     if (!locks) locks = this.locks = [];
@@ -375,8 +375,13 @@ SC.NestedStore = SC.Store.extend(
     rev = this.revisions[storeKey] = this.revisions[storeKey];
 
     // save a lock and make it not editable
-    locks[storeKey] = rev || 1;
-
+    locks[storeKey] = rev || 1;    
+    
+    var that = this;
+    this._propagateToChildren(storeKey, function(storeKey){
+      that._lock(storeKey, YES);
+    });
+      
     return this ;
   },
 
@@ -407,6 +412,10 @@ SC.NestedStore = SC.Store.extend(
     // properly fork our dataHash from our parent store.  Similarly, if no
     // status was passed in, we'll save our own copy of the value.
     if (hash) {
+      if (this.childRecords[storeKey]) {
+        this._lock(storeKey);
+        didLock = YES;
+      }      
       this.dataHashes[storeKey] = hash;
     }
     else {

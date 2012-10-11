@@ -340,7 +340,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   */
   storeKeyEditState: function (storeKey) {
     var editables = this.editables, locks = this.locks;
-    return (editables && editables[storeKey]) ? SC.Store.EDITABLE : SC.Store.LOCKED ;
+    return (editables && editables[storeKey] || this.peekStatus(storeKey) === SC.Record.EMPTY) ? SC.Store.EDITABLE : SC.Store.LOCKED ;
   },
 
   /**

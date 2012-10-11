@@ -462,7 +462,7 @@ test("Store#pushRetrieve for parent updates the child records, on paths nested m
 test("Use in Nested Store With lockOnRead: NO", function(){
   var nstore, dir, c, file,
       pk, id, nFile, nDir, nRootDir;
-    
+  
   // First, create nested store and find the file
   nstore = store.chain().set('lockOnRead', NO);
   SC.RunLoop.begin();
@@ -470,7 +470,6 @@ test("Use in Nested Store With lockOnRead: NO", function(){
   SC.RunLoop.end();
   ok(nDir, "Directory id:1 exists"); 
   equals(nDir.get('name'), 'Dir 1', "Directory id:1 has a name of 'Dir 1'");
-  //nRootDir.set('name', 'Directory 1'); // This will cause the parent record to lock before the child is initialized. [A]
   c = nDir.get('contents');
   ok(c, "Content of Directory id:1 exists");
   nDir = c.objectAt(0);
@@ -483,8 +482,6 @@ test("Use in Nested Store With lockOnRead: NO", function(){
   equals(nFile.get('name'), 'File 1', "Nested > File id:1 has a name of 'File 1'");
   equals(nFile.get('description'), 'Desc 1', "Nested > File id:1 has a description of 'File 1'");
   
-  //nRootDir.set('name', 'Directory 1'); // This will cause the parent record to lock before the child is initialized. [B]
-
   // Second, change the name of the nested store and see what happens
   nFile.set('name', 'Change Name');
   nFile.set('description', 'Change Desc');
