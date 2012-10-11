@@ -345,9 +345,9 @@ SC.NestedStore = SC.Store.extend(
     while(pstore && (editState=pstore.storeKeyEditState(storeKey)) === SC.Store.INHERITED) {
       pstore = pstore.get('parentStore');
     }
-
-    if (pstore && editState === SC.Store.EDITABLE) {
-
+    
+    if (pstore && editState === SC.Store.EDITABLE || editState === SC.Store.EMPTY) {
+      
       pk = this.childRecords[storeKey];
       if (pk){
         // Since this is a nested record we have to actually walk up the parent chain

@@ -340,7 +340,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   */
   storeKeyEditState: function (storeKey) {
     var editables = this.editables, locks = this.locks;
-    return (editables && editables[storeKey] || this.peekStatus(storeKey) === SC.Record.EMPTY) ? SC.Store.EDITABLE : SC.Store.LOCKED ;
+    return (editables && editables[storeKey]) ? SC.Store.EDITABLE : (this.peekStatus(storeKey) === SC.Record.EMPTY) ? SC.Store.EMPTY : SC.Store.LOCKED ;
   },
 
   /**
@@ -2864,6 +2864,16 @@ SC.Store.mixin(/** @scope SC.Store.prototype */{
     @type String
   */
   INHERITED: 'inherited',
+  
+  
+  /**
+    Data hash state indicates the hash is unused in the parent
+    store and is currently editable.
+    
+    @type String
+  */
+  EMPTY: 'empty',
+  
 
   /** @private
     This array maps all storeKeys to primary keys.  You will not normally
