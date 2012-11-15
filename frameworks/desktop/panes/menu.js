@@ -295,6 +295,11 @@ SC.MenuPane = SC.PickerPane.extend(
     this.adjust('height', this.get('menuHeight'));
     this.positionPane();
 
+    // Scroll if needed
+    //if (!isNaN(parseInt(preferMatrix[1]))) {
+    //  this._menuScrollView.scrollTo(0, -1 * preferMatrix[1]);      
+    //}
+    
     // Because panes themselves do not receive key events, we need to set the
     // pane's defaultResponder to itself. This way key events can be
     // interpreted in keyUp.
