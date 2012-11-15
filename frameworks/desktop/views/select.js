@@ -802,9 +802,11 @@ SC.SelectView = SC.ButtonView.extend(
         break;
     }
 
-    var preferMatrixAttributeTop = controlSizeTuning,
-      itemIdx = this.get('_itemIdx'),
-      leftAlign = this.get('leftAlign'), defPreferMatrix, tempPreferMatrix;
+    var preferMatrixAttributeTop = controlSizeTuning ,
+      itemIdx = this.get('_itemIdx') ,
+      item = this.get('_itemList').objectAt(itemIdx),
+      leftAlign = this.get('leftAlign'), defPreferMatrix, tempPreferMatrix,
+      separatorAdjustment = 0 ;
 
     if(this.get('isDefaultPosition')) {
       defPreferMatrix = [1, 0, 3] ;
@@ -812,8 +814,11 @@ SC.SelectView = SC.ButtonView.extend(
     }
     else {
       if(itemIdx) {
-        var separatorAdjustment = this.get('_itemList').objectAt(itemIdx).get('separatorCount') * (customMenuItemHeight - customMenuSeparatorHeight);
-
+        
+        if (item) {
+          separatorAdjustment = item.get('separatorCount') * (customMenuItemHeight - customMenuSeparatorHeight);
+        }
+        
         preferMatrixAttributeTop = itemIdx * customMenuItemHeight +
           controlSizeTuning - separatorAdjustment ;
       }
