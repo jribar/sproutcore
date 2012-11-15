@@ -394,11 +394,13 @@ SC.SelectView = SC.ButtonView.extend(
   itemsDidChange: function() {
     var escapeHTML, items, len, nameKey, iconKey, valueKey, separatorKey, showCheckbox,
       currentSelectedVal, shouldLocalize, isSeparator, itemList, isChecked,
-      idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName, isSameRecord;
+      idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName, isSameRecord,
+      sepCount;
 
     items = this.get('items') || [];
     items = this.sortObjects(items);
     len = items.length;
+    sepCount = 0;
 
     //Get the nameKey, iconKey and valueKey set by the user
     nameKey = this.get('itemTitleKey');
@@ -474,6 +476,7 @@ SC.SelectView = SC.ButtonView.extend(
             isSeparator: true,
             value: '_sc_separator_item'
           });
+          sepCount++;
         } else {
           //Get the name value. If value key is not specified convert obj
           //to string
@@ -543,7 +546,8 @@ SC.SelectView = SC.ButtonView.extend(
             value: value,
             isEnabled: itemEnabled,
             checkbox: isChecked,
-            target: this
+            target: this,
+            separatorCount: sepCount
           });
         }
 
@@ -755,41 +759,52 @@ SC.SelectView = SC.ButtonView.extend(
      place aligned to the item on the button when menu is opened.
   */
   changeSelectPreferMatrix: function () {
-    var controlSizeTuning = 0, customMenuItemHeight = 0;
+    var controlSizeTuning = 0, customMenuItemHeight = 0, customMenuSeparatorHeight = 0;
     switch (this.get('controlSize')) {
       case SC.TINY_CONTROL_SIZE:
         controlSizeTuning = SC.SelectView.TINY_OFFSET_Y;
         customMenuItemHeight = SC.MenuPane.TINY_MENU_ITEM_HEIGHT;
+        customMenuSeparatorHeight = SC.MenuPane.TINY_MENU_ITEM_SEPARATOR_HEIGHT;
         break;
       case SC.SMALL_CONTROL_SIZE:
         controlSizeTuning = SC.SelectView.SMALL_OFFSET_Y;
         customMenuItemHeight = SC.MenuPane.SMALL_MENU_ITEM_HEIGHT;
+        customMenuSeparatorHeight = SC.MenuPane.SMALL_MENU_ITEM_SEPARATOR_HEIGHT;
         break;
       case SC.REGULAR_CONTROL_SIZE:
         controlSizeTuning = SC.SelectView.REGULAR_OFFSET_Y;
         customMenuItemHeight = SC.MenuPane.REGULAR_MENU_ITEM_HEIGHT;
+        customMenuSeparatorHeight = SC.MenuPane.REGULAR_MENU_ITEM_SEPARATOR_HEIGHT;
         break;
       case SC.LARGE_CONTROL_SIZE:
         controlSizeTuning = SC.SelectView.LARGE_OFFSET_Y;
         customMenuItemHeight = SC.MenuPane.LARGE_MENU_ITEM_HEIGHT;
+        customMenuSeparatorHeight = SC.MenuPane.LARGE_MENU_ITEM_SEPARATOR_HEIGHT;
         break;
       case SC.HUGE_CONTROL_SIZE:
         controlSizeTuning = SC.SelectView.HUGE_OFFSET_Y;
         customMenuItemHeight = SC.MenuPane.HUGE_MENU_ITEM_HEIGHT;
+        customMenuSeparatorHeight = SC.MenuPane.HUGE_MENU_ITEM_SEPARATOR_HEIGHT;
         break;
     }
 
     var preferMatrixAttributeTop = controlSizeTuning,
       itemIdx = this.get('_itemIdx'),
-      leftAlign = this.get('leftAlign'), defPreferMatrix, tempPreferMatrix;
+      item = this.get('_itemList').objectAt(itemIdx),
+      leftAlign = this.get('leftAlign'), defPreferMatrix, tempPreferMatrix,
+      separatorAdjustment = 0;
 
     if (this.get('isDefaultPosition')) {
       defPreferMatrix = [1, 0, 3];
       this.set('preferMatrix', defPreferMatrix);
     } else {
       if (itemIdx) {
+        if (item) {
+          separatorAdjustment = item.get('separatorCount') * (customMenuItemHeight - customMenuSeparatorHeight);
+        }
+
         preferMatrixAttributeTop = itemIdx * customMenuItemHeight +
-          controlSizeTuning;
+          controlSizeTuning - separatorAdjustment ;
       }
       tempPreferMatrix = [leftAlign, -preferMatrixAttributeTop, 2];
       this.set('preferMatrix', tempPreferMatrix);
