@@ -471,6 +471,7 @@ SC.SelectView = SC.ButtonView.extend(
 
       //Set the items in the itemList array
       itemList.push(item);
+      idx++;
     }
 
     items.forEach(function (object) {
