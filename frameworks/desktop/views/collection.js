@@ -3136,8 +3136,12 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate, SC.CollectionConte
     attrs.page = this.page;
     attrs.outlineLevel = outlineLevel;
 
-    if (isGroupView) attrs.classNames = this._GROUP_COLLECTION_CLASS_NAMES;
-    else attrs.classNames = this._COLLECTION_CLASS_NAMES;
+    if (isGroupView) {
+      attrs.classNames = this._GROUP_COLLECTION_CLASS_NAMES;
+    } else {
+      attrs.removeClassNames = this._GROUP_COLLECTION_CLASS_NAMES;
+      attrs.classNames = this._COLLECTION_CLASS_NAMES;
+    }
 
     attrs.layout = this.layoutForContentIndex(idx);
     if (!attrs.layout) { attrs.layout = SC.View.prototype.layout; }
@@ -3253,6 +3257,8 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate, SC.CollectionConte
   */
   _reconfigureItemView: function (itemView, attrs) {
     itemView.beginPropertyChanges();
+    itemView.get('classNames').removeObjects(attrs.removeClassNames);
+    itemView.get('classNames').pushObjects(attrs.classNames);
     itemView.set('content', attrs.content);
     itemView.set('contentIndex', attrs.contentIndex);
     itemView.set('isEnabled', attrs.isEnabled);
