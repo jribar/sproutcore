@@ -39,6 +39,7 @@ SC.BaseTheme.sliderRenderDelegate = SC.RenderDelegate.create({
 
     // Draw the track's visual elements ("beginning", "middle" and "end").
     this.includeSlices(dataSource, context, SC.THREE_SLICE);
+    context.push('<span class="sc-handle" style="left: '+ dataSource.get('value') + '%"></span>');
 
     // If desired, draw the step choinks.
     if (dataSource.get('markSteps')) {
