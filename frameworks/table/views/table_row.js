@@ -27,7 +27,9 @@ SC.TableRowView = SC.View.extend(SC.Control,{
   cells: [],
 
   acceptsFirstResponder: YES,
-
+  
+  isReusable: NO,
+  
   /**
     A reference to the row's encompassing TableView.
 
