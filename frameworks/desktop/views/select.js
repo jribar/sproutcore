@@ -497,7 +497,7 @@ SC.SelectView = SC.ButtonView.extend(
         // get the separator
         isSeparator = separatorKey ? (object.get ? object.get(separatorKey) : object[separatorKey]) : NO;
 
-          if (!isSeparator) {
+        if (!isSeparator) {
           //Get the name value. If value key is not specified convert obj
           //to string
           name = nameKey ? (object.get ?
@@ -549,18 +549,19 @@ SC.SelectView = SC.ButtonView.extend(
             isChecked = NO;
           }
 
-        // Check if the item is enabled
-        itemEnabled = (object.get ? object.get(isEnabledKey) : object[isEnabledKey]);
-        itemEnabled = (this.emptyValueIsDisabled === YES && SC.empty(value)) ? NO : itemEnabled;
-        if (NO !== itemEnabled) itemEnabled = YES;
+          // Check if the item is enabled
+          itemEnabled = (object.get ? object.get(isEnabledKey) : object[isEnabledKey]);
+          itemEnabled = (this.emptyValueIsDisabled === YES && SC.empty(value)) ? NO : itemEnabled;
+          if (NO !== itemEnabled) itemEnabled = YES;
 
-        // Set the first non-separator selectable item from the list as the
-        // default selected item
-        if (!hasSelectableFirstItem && itemEnabled && !isSeparator) {
-          this._defaultVal = value ;
-          this._defaultTitle = name ;
-          this._defaultIcon = icon ;
-          hasSelectableFirstItem = YES;
+          // Set the first non-separator selectable item from the list as the
+          // default selected item
+          if (!hasSelectableFirstItem && itemEnabled && !isSeparator) {
+            this._defaultVal = value ;
+            this._defaultTitle = name ;
+            this._defaultIcon = icon ;
+            hasSelectableFirstItem = YES;
+          }
         }
 
         item = SC.Object.create({
@@ -585,7 +586,7 @@ SC.SelectView = SC.ButtonView.extend(
     }, this );
     this.set('_itemList', itemList);
 
-    if (itemList.length == 0) {
+    if (itemList.length === 0) {
       // Item List has been reset.  Lets clear defaults.
       this._defaultVal = null;
       this._defaultTitle = null;
