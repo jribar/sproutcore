@@ -9,7 +9,8 @@ sc_require('mixins/inline_editable');
 sc_require('mixins/inline_editor_delegate');
 sc_require('delegates/inline_text_field');
 
-
+SC.REGULAR_WEIGHT = 'normal';
+SC.BOLD_WEIGHT = 'bold';
 /**
   @class
 
@@ -67,6 +68,15 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
     @default true
   */
   escapeHTML: true,
+
+  /**
+    Specify the font weight for this.  You may pass SC.REGULAR_WEIGHT, or SC.BOLD_WEIGHT.
+
+    @type String SC.REGULAR_WEIGHT|SC.BOLD_WEIGHT
+    @default null
+    @deprecated Use CSS instead.
+  */
+  fontWeight: null,
 
   /**
     If true, then the value will be localized.

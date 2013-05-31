@@ -127,8 +127,8 @@ SC.ControlTestPane.add = function(label, view, attrs) {
   var labelView = SC.LabelView.design({
     value: label + ':',
     layout: { left: 0, right: 0, top: 0, height: labelHeight },
-   // TODO: textAlign: SC.ALIGN_RIGHT,
-    // TODO: fontWeight: SC.BOLD_WEIGHT
+   // textAlign: SC.ALIGN_RIGHT,
+    fontWeight: SC.BOLD_WEIGHT
   });
 
   // wrap label in parent view in order to center text vertically
