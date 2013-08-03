@@ -366,23 +366,18 @@ SC.ListItemView = SC.View.extend(SC.InlineEditable, SC.Control,
     // Fast path, reject secondary clicks.
     if (evt.which !== 1) return false;
 
-    // if content is not editable, then always let collection view handle the
-    // event.
-    if (!this.get('contentIsEditable')) return NO;
-
-    // if occurred inside checkbox, item view should handle the event.
-    if (this._isInsideCheckbox(evt)) {
-      this._addCheckboxActiveState();
-      this._isMouseDownOnCheckbox = YES;
-      this._isMouseInsideCheckbox = YES;
-      return YES; // listItem should handle this event
-
-    } else if (this._isInsideDisclosure(evt)) {
+    if (this._isInsideDisclosure(evt)) {
       this._addDisclosureActiveState();
       this._isMouseDownOnDisclosure = YES;
       this._isMouseInsideDisclosure = YES;
       return YES;
-    } else if (this._isInsideRightIcon(evt)) {
+    } else if (this.get('contentIsEditable') && this._isInsideCheckbox(evt)) {
+      // if occurred inside checkbox, item view should handle the event.
+      this._addCheckboxActiveState();
+      this._isMouseDownOnCheckbox = YES;
+      this._isMouseInsideCheckbox = YES;
+      return YES; // listItem should handle this event
+    } else if (this.get('contentIsEditable') && this._isInsideRightIcon(evt)) {
       this._addRightIconActiveState();
       this._isMouseDownOnRightIcon = YES;
       this._isMouseInsideRightIcon = YES;
