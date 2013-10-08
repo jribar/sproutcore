@@ -9,8 +9,8 @@ SC.BaseTheme.splitDividerRenderDelegate = SC.RenderDelegate.create({
   className: 'split-divider',
   dividerSize: 1,
 
-  splitPositionOffset: -5,
-  splitSizeOffset: 10,
+  splitPositionOffset: 0,
+  splitSizeOffset: 2,
 
   render: function(dataSource, context) {
     this.addSizeClassName(dataSource, context);
