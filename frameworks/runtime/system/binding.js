@@ -1115,6 +1115,20 @@ SC.Binding = /** @scope SC.Binding.prototype */{
     return this._logicGateBinding(this._LogicGateOr, pathA, pathB);
   },
 
+  /**
+    Adds a transform that will format a string with SC.String.fmt.
+
+    @param {String} [fromPath]
+    @returns {SC.Binding} this
+  */
+  fmt: function (format) {
+    return this.transform(function (v,b) {
+      if (typeof(format)!=="string") return v;
+      if (SC.none(v)) v = '';
+      return format.fmt(v);
+    });
+  },
+
   toString: function () {
     var from = this._fromRoot ? "<%@>:%@".fmt(this._fromRoot, this._fromPropertyPath) : this._fromPropertyPath;
 
