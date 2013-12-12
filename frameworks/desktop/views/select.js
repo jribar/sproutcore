@@ -394,7 +394,8 @@ SC.SelectView = SC.ButtonView.extend(
   itemsDidChange: function() {
     var escapeHTML, items, len, nameKey, iconKey, valueKey, separatorKey, showCheckbox,
         currentSelectedVal, shouldLocalize, isSeparator, itemList, isChecked,
-        idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName, isSameRecord;
+        idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName, isSameRecord,
+        hasSelectableFirstItem, hasSetTitle;
 
     items = this.get('items') || [];
     items = this.sortObjects(items);
@@ -424,6 +425,12 @@ SC.SelectView = SC.ButtonView.extend(
     //index for finding the first item in the list
     idx = 0;
 
+    //boolean for finding the first selectable item in the list
+    hasSelectableFirstItem = NO;
+
+    //once we've set the title we don't try again
+    hasSetTitle = NO;
+
     // Add the empty name to the list if applicable
     emptyName = this.get('emptyName');
 
@@ -444,7 +451,15 @@ SC.SelectView = SC.ButtonView.extend(
 
       if (SC.none(currentSelectedVal)) {
         this.set('title', emptyName);
+        this.set('icon', null);
+        hasSetTitle = YES;
       }
+      
+      // This will always be the first item, so it becomes the default
+      this._defaultVal = null;
+      this._defaultTtile = emptyName;
+      this.defaultIcon = null;
+      hasSelectableFirstItem = YES;
 
       //Set the items in the itemList array
       itemList.push(item);
@@ -503,7 +518,7 @@ SC.SelectView = SC.ButtonView.extend(
               isSameRecord = currentSelectedVal.get('storeKey') === value.get('storeKey');
             }
 
-            if (currentSelectedVal === value || isSameRecord) {
+            if ((currentSelectedVal === value || isSameRecord) && !hasSetTitle) {
               this.set('title', name);
               this.set('icon', icon);
             }
@@ -526,10 +541,11 @@ SC.SelectView = SC.ButtonView.extend(
 
           // Set the first non-separator selectable item from the list as the
           // default selected item
-          if (SC.none(this._defaultVal) && itemEnabled) {
+          if (!hasSelectableFirstItem && SC.none(this._defaultVal) && itemEnabled && !isSeparator) {
             this._defaultVal = value;
             this._defaultTitle = name;
             this._defaultIcon = icon;
+            hasSelectableFirstItem = YES;
           }
         }
 
@@ -551,17 +567,28 @@ SC.SelectView = SC.ButtonView.extend(
 
       idx += 1;
 
-      this.set('_itemList', itemList);
     }, this );
+    this.set('_itemList', itemList);
 
-    var value = this.get('value');
-    if (SC.none(value)) {
-      if (SC.none(emptyName)) {
-        this.set('value', this._defaultVal);
-        this.set('title', this._defaultTitle);
-        this.set('icon', this._defaultIcon);
-      }
-      else this.set('title', emptyName);
+    if (itemList.length == 0) {
+      // Item List has been reset.  Lets clear defaults.
+      this._defaultVal = null;
+      this._defaultTitle = null;
+      this._defaultIcon = null;
+    }
+
+    if (firstTime) {
+      this.invokeLast(function () {
+        var value = this.get('value');
+        if (SC.none(value)) {
+          // Always reset the title and icon, only set the value if it didn't exist.
+          if(SC.none(value) && !SC.none(this._defaultVal)) {
+            this.set('value', this._defaultVal) ;
+          }
+        }
+        this.set('title', this._defaultTitle) ;
+        this.set('icon', this._defaultIcon) ;
+      });
     }
 
     //Set the preference matrix for the menu pane
