@@ -49,6 +49,14 @@
 
     }
 
+    &.bottom-toolbar.top-toolbar .popover-background {
+      bottom: -20px;
+      @include slices(
+        "popover.png", $left: 30, $bottom: 75, $top: 75, $right: 30,
+        $skip: left middle right top-left top top-right
+      );
+
+    }
   }
 
   @theme(solid) {
