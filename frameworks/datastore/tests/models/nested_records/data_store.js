@@ -19,7 +19,8 @@ var initModels = function () {
   });
 
   NestedRecord.File = SC.Record.extend({
-    name: SC.Record.attr(String)
+    name: SC.Record.attr(String),
+    description: SC.Record.attr(String)
   });
 
 };
@@ -51,13 +52,15 @@ module("Data Store Tests for Nested Records", {
               {
                 type: 'File',
                 guid: 3,
-                name: 'File 1'
+                name: 'File 1',
+                description: 'Desc 1'
               },
               {
                 type: 'File',
                 guid: 4,
-                name: 'File 2'
-              }
+                name: 'File 2',
+                description: 'Desc 2'
+              } 
             ]
           }
         ]
@@ -65,7 +68,8 @@ module("Data Store Tests for Nested Records", {
       {
         type: 'File',
         id: 5,
-        name: 'File 3'
+        name: 'File 3',
+        description: 'Desc 3'
       }
     ]);
     SC.RunLoop.end();
@@ -453,4 +457,55 @@ test("Store#pushRetrieve for parent updates the child records, on paths nested m
 
   equals(parent.get('name'), 'Dir 1 Changed', 'Dir id:1 name was changed');
   equals(nr.get('name'), 'File 1 Changed', "File id:3 name has changed");
+});
+
+test("Use in Nested Store With lockOnRead: NO", function(){
+  var nstore, dir, c, file,
+      pk, id, nFile, nDir, nRootDir;
+    
+  // First, create nested store and find the file
+  nstore = store.chain().set('lockOnRead', NO);
+  SC.RunLoop.begin();
+  nRootDir = nDir = nstore.find(NestedRecord.Directory, 1);
+  SC.RunLoop.end();
+  ok(nDir, "Directory id:1 exists"); 
+  equals(nDir.get('name'), 'Dir 1', "Directory id:1 has a name of 'Dir 1'");
+  //nRootDir.set('name', 'Directory 1'); // This will cause the parent record to lock before the child is initialized. [A]
+  c = nDir.get('contents');
+  ok(c, "Content of Directory id:1 exists");
+  nDir = c.objectAt(0);
+  ok(nDir, "Directory id:2 exists"); 
+  equals(nDir.get('name'), 'Dir 2', "Directory id:2 has a name of 'Dir 2'");
+  c = nDir.get('contents');
+  ok(c, "Content of Directory id:2 exists");
+  nFile = c.objectAt(0);
+  ok(nFile, "Nested > File id:1 exists"); 
+  equals(nFile.get('name'), 'File 1', "Nested > File id:1 has a name of 'File 1'");
+  equals(nFile.get('description'), 'Desc 1', "Nested > File id:1 has a description of 'File 1'");
+  
+  //nRootDir.set('name', 'Directory 1'); // This will cause the parent record to lock before the child is initialized. [B]
+
+  // Second, change the name of the nested store and see what happens
+  nFile.set('name', 'Change Name');
+  nFile.set('description', 'Change Desc');
+  equals(nFile.get('name'), 'Change Name', "Nested > File id:1 has changed the name to 'Changed Name'");
+  equals(nFile.get('description'), 'Change Desc', "Nested > File id:1 has changed the description to 'Changed Desc'");
+  equals(nFile.get('name'), nFile.readAttribute('name'), "Nested > File id:1 has updated the underlying data hash for name");
+  equals(nFile.get('description'), nFile.readAttribute('description'), "Nested > File id:1 has updated the underlying data hash for description");
+  equals(nRootDir.readOnlyAttributes().contents[0].contents[0].name, 'Change Name', "Nested > Parent Dir id: 1 has the updated name in it's data hash");
+  equals(nRootDir.readOnlyAttributes().contents[0].contents[0].description, 'Change Desc', "Nested > Parent Dir id: 1 has the updated description in it's data hash");
+  
+  // Third, commit the changes
+  nstore.commitChanges();
+  nstore.destroy();
+  nstore = null;
+
+  // Fourth, load the record in the root store and verify changes have been made.
+  dir = store.find(NestedRecord.Directory, 1);
+  file = dir.get('contents').objectAt(0).get('contents').objectAt(0);
+  equals(dir.get('status'), SC.Record.READY_DIRTY, 'Base > Directory id:1 has a READY_DIRTY State');
+  equals(file.get('status'), SC.Record.READY_DIRTY, 'Base > File id:1 has a READY_DIRTY State');
+  equals(file.get('name'), 'Change Name', "Base > File id:1 has actually changed to name of 'Changed Name'");
+  equals(file.get('description'), 'Change Desc', "Base > File id:1 has actually changed to description of 'Changed Desc'");
+  
 });
