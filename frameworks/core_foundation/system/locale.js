@@ -79,9 +79,7 @@ SC.Locale = SC.Object.extend({
 
 
   ordinalForNumber: function(number){
-    var englishFunction = SC.Locale._numberOrdinalFunctions.en,
-      currentFunction = SC.Locale._numberOrdinalFunctions[this.language] || englishFunction;
-    return currentFunction(number);
+    return SC.ORDINAL_FUNCTION(number);
   },
 
   /**
@@ -394,24 +392,6 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     ret.options = SC.Locale.options ;
     ret.toString = SC.Locale.toString ;
     return ret ;
-  },
-
-  /**
-   * Contains the ordinal functions for each language, these functions are
-   * expected to take a number as the type and return a string
-   *
-   *
-   */
-  _numberOrdinalFunctions: {
-
-    en: function(number) {
-      var d = number % 10;
-      return (~~ (number % 100 / 10) === 1) ? 'th' :
-             (d === 1) ? 'st' :
-             (d === 2) ? 'nd' :
-             (d === 3) ? 'rd' : 'th';
-    }
-
   }
 
 }) ;
