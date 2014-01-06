@@ -600,7 +600,6 @@ SC.SelectView = SC.ButtonView.extend(
       this._defaultIcon = null;
     }
 
-    if (firstTime) {
       this.invokeLast(function () {
         var value = this.get('value');
         if (SC.none(value)) {
@@ -612,7 +611,6 @@ SC.SelectView = SC.ButtonView.extend(
         this.set('title', this._defaultTitle) ;
         this.set('icon', this._defaultIcon) ;
       });
-    }
 
     //Set the preference matrix for the menu pane
     this.changeSelectPreferMatrix();
