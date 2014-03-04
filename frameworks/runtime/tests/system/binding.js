@@ -293,6 +293,17 @@ test("Single binding using notEmpty function.", function () {
   equals("(EMPTY)", bond.get("array1"));
 });
 
+test("Single binding using fmt formatting function.", function() {
+  var bond = Bon1.create({
+    var1Binding: SC.Binding.single("TestNamespace.bon2.val1").fmt("%@ world!")
+  });
+  SC.Binding.flushPendingChanges();
+  equals(bond.get("var1"), "hello world!");
+  bon2.set("val1", "bonjour");
+  SC.Binding.flushPendingChanges();
+  equals(bond.get("var1"), "bonjour world!");
+});
+
 test("Binding with transforms, function to check the type of value", function () {
   var jon = Bon1.create({
     value1Binding: SC.Binding.transform(function (val1) {
