@@ -468,8 +468,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
                 // Ugly, but there's basically no other way to do it at the moment, other than
                 // leaving this broken as it was before
                 var that = this;
+                var cp = childPath[0];
                 this.invokeLast(function(){
-                  that.records[storeKey].get(childPath[0]).forEach(function(it){});
+                  that.records[storeKey].get(cp).forEach(function(it){});    
                 });
             }
           } else {
