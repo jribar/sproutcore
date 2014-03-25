@@ -2427,9 +2427,11 @@ SC.ScrollView = SC.View.extend({
     scrollers, etc.
   */
   frameDidChange: function () {
-    this._scroll_contentWidth = this._scroll_contentHeight = this._scroll_containerHeight = this._scroll_containerWidth = null;
-    this.contentViewFrameDidChange();
-  }.observes('frame'),
+    if (this.get('isVisibleInWindow')) {
+      this._scroll_contentWidth = this._scroll_contentHeight = this._scroll_containerHeight = this._scroll_containerWidth = null;
+      this.contentViewFrameDidChange();
+    }
+  }.observes('frame', 'isVisibleInWindow'),
 
   /** @private
     If the layer of the content view changes, we need to readjust the
