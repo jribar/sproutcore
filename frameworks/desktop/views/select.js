@@ -429,6 +429,11 @@ SC.SelectView = SC.ButtonView.extend(
     // Add the empty name to the list if applicable
     emptyName = this.get('emptyName');
 
+    // Clear defaults
+    this._defaultVal = null;
+    this._defaultTitle = null;
+    this._defaultIcon = null;
+
     if (!SC.none(emptyName)) {
       emptyName = shouldLocalize ? SC.String.loc(emptyName) : emptyName;
       emptyName = escapeHTML ? SC.RenderContext.escapeHTML(emptyName) : emptyName;
@@ -733,7 +738,7 @@ SC.SelectView = SC.ButtonView.extend(
 
   /** @private Each time the value changes, update each item's checkbox property and update our display properties. */
   valueDidChange: function () {
-    var itemList = this._itemList,
+    var itemList = this._itemList, didSet,
       showCheckbox = this.get('showCheckbox'),
       value = this.get('value');
 
@@ -743,6 +748,7 @@ SC.SelectView = SC.ButtonView.extend(
         isChecked = false;
 
       if (value === item.get('value')) {
+        didSet = YES;
         isChecked = showCheckbox;
         this.set("title", item.get("title"));
         this.set("icon", item.get("icon"));
@@ -752,6 +758,18 @@ SC.SelectView = SC.ButtonView.extend(
       item.set('checkbox', isChecked);
     }
 
+    if (didSet !== YES) {
+      var emptyName = this.get('emptyName');
+      if (SC.none(emptyName)) {
+        this.set('title', this._defaultTitle);
+        this.set('icon', this._defaultIcon);
+      } else {
+        emptyName = this.get('localize') ? SC.String.loc(emptyName) : emptyName;
+        emptyName = this.get('escapeHTML') ? SC.RenderContext.escapeHTML(emptyName) : emptyName;
+        this.set('title', emptyName);
+      }
+    }
+    
   }.observes('value'),
 
   /** @private

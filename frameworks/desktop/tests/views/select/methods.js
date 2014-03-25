@@ -159,10 +159,12 @@ test("The content of the popup should be recalculated correctly when the list of
 });
 
 test("The content of the popup should be recalculated correctly when the list of items is empty", function() {
+  equals(view3.get("_defaultTitle"), view3.get("_itemList")[0].title, "The list's default title should be the first item.");
   equals(view3.get("_itemList").length, 3, "The list should have 3 items.");
   SC.RunLoop.begin() ;
   view3.set('items', [] );
   SC.RunLoop.end() ;
+  equals(view3.get("_defaultTitle"), null, "The list's default title should now be null.");
   equals(view3.get("_itemList").length, 0, "The list should have 0 items.");
 });
 
@@ -176,4 +178,16 @@ test("Setting the value of the view should change the title & icon properties", 
 
   equals(view4.get('title'), "Around", "The view's title should now be");
   equals(view4.get('icon'), "around-icon", "The view's icon should now be");
+});
+
+test("Setting the value of the view to a value not in the list should change the title & icon properties to the default values", function () {
+  equals(view4.get('value'), "World", "The view gets a default value by sort");
+  equals(view4.get('title'), "World", "The view's title should originally be");
+  equals(view4.get('icon'), "world-icon", "The view's icon should originally be");
+  SC.run(function () {
+    view4.set('value', 'Foobar');
+  });
+
+  equals(view4.get('title'), "Around", "The view's title should now be the first (default) item");
+  equals(view4.get('icon'), "around-icon", "The view's icon should now be the first (default) item");
 });
