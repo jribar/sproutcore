@@ -770,8 +770,14 @@ SC.ListItemView = SC.View.extend(SC.InlineEditable, SC.Control,
     key = this.getDelegateProperty('classNameKey', del);
     if (key) {
       value = content ? (content.get ? content.get(key) : content[key]) : NO;
+      if (this._currentClassName) {
+        // If previously rendered a class, clean up.
+        context.removeClass(this._currentClassName);
+        this._currentClassName = null;
+      }
       if (value !== null) {
-        classArray.push(value);        
+        classArray.push(value);
+        this._currentClassName = value;
       }
     }
     
