@@ -609,6 +609,8 @@ SC.PickerPane = SC.PalettePane.extend(
 
       origin = this.fitPositionToScreen(origin, frame, anchor);
       adjustHash = {
+        width: origin.width,
+        height: origin.height,
         left: origin.x,
         top: origin.y
       };
@@ -618,6 +620,8 @@ SC.PickerPane = SC.PalettePane.extend(
     // if no anchor view has been set for some reason, just center.
     else {
       this.adjust({
+        width: layout.width,
+        height: layout.height,
         centerX: 0,
         centerY: 0
       });
