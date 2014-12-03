@@ -470,7 +470,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
                 var that = this;
                 var cp = childPath[0];
                 this.invokeLast(function(){
-                  that.records[storeKey].get(cp).forEach(function(it){});    
+                  if (that.records[storeKey]) that.records[storeKey].get(cp).forEach(function(it){});    
                 });
             }
           } else {
